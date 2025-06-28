@@ -1,0 +1,53 @@
+{
+  "name": "RAG_pipeline_to_chatbot_using_google_drive_and_pinecone",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "1B5kgy6KdOYO9srM-Zys7ibSRAtLDZUqe",
+          "mode": "list",
+          "cachedResultName": "n8n_rag",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1B5kgy6KdOYO9srM-Zys7ibSRAtLDZUqe"
+        },
+        "event": "fileCreated",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "11fb8ebe-0104-412a-99ef-12854db5f95b",
+      "name": "Google Drive Trigger",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "KXhnJ3ZjxDaEny4z",
+          "name": "Google Drive account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {},
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "7e666a13-8e74-4486-8244-b314d0c86352",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "5f4f4635600bbaa8438fcc2a0ba3de673a08b820ca61c8109616ea2ca8ba1838"
+  },
+  "id": "Lo1bNmRqgD3s5zn3",
+  "tags": []
+}
