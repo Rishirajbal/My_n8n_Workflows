@@ -4,7 +4,7 @@
 
 This repository contains a curated collection of modular, AI-powered automation workflows, designed and maintained by **Rishiraj Bal**. Each workflow leverages **[n8n](https://n8n.io/)** as the orchestration backbone — combining LLM agents, API integrations, dynamic data pipelines, and structured output handling into robust, production-ready systems.
 
-**➡ [Jump to Self-Hosting Guide](#self-hosting-n8n)**
+**[Jump to Self-Hosting Guide](#self-hosting-n8n)**
 
 ---
 
