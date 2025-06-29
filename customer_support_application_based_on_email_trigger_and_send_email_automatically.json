@@ -1,0 +1,271 @@
+{
+  "name": "customer_support application_based_on_email_trigger_and_send_email_automatically",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -280,
+        120
+      ],
+      "id": "d6982469-6477-4674-84b1-d7ed4cf1995a",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Nd7OLj00RtSKit22",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputText": "={{ $json.snippet }}",
+        "categories": {
+          "categories": [
+            {
+              "category": "customer query and problem solver",
+              "description": "when an email is concerned with any type of query "
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textClassifier",
+      "typeVersion": 1.1,
+      "position": [
+        -60,
+        120
+      ],
+      "id": "60701218-b953-47e4-a3ed-c5157e26af9b",
+      "name": "Text Classifier"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        28,
+        340
+      ],
+      "id": "6e47e0f5-2612-4e1d-8df1-a01998ca321a",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "NAkzLe6AHNgbVaEw",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Gmail Trigger').item.json.snippet }}",
+        "options": {
+          "systemMessage": "You are a helpful assistant in a history teaching app which specializes in espionage history who provides customer support to various trainers\nbe informative concise and friendly."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        332,
+        120
+      ],
+      "id": "a75a6e7d-dc40-459c-a9ed-8fca422d9e51",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        316,
+        340
+      ],
+      "id": "cfc29017-1bf4-4e0c-a43e-2ab014ae5b15",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "bI182txiPn0sDRq3",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "retrieve documents for customer support",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "rishi",
+          "mode": "list",
+          "cachedResultName": "rishi"
+        },
+        "options": {
+          "pineconeNamespace": "rishione"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        436,
+        342.5
+      ],
+      "id": "82b2a12a-9630-405f-b6d5-6470604cd909",
+      "name": "Pinecone Vector Store",
+      "credentials": {
+        "pineconeApi": {
+          "id": "lDunwWKdH9qfxJ65",
+          "name": "PineconeApi account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.embeddingsCohere",
+      "typeVersion": 1,
+      "position": [
+        524,
+        540
+      ],
+      "id": "25e040fa-d2fd-4eb3-960c-cc2825a80954",
+      "name": "Embeddings Cohere",
+      "credentials": {
+        "cohereApi": {
+          "id": "VnVSmykIrtdJAhaX",
+          "name": "CohereApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "rishirajbal987@gmail.com",
+        "subject": "customer help",
+        "emailType": "text",
+        "message": "={{ $json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        812,
+        120
+      ],
+      "id": "6ad2942c-bfe4-413e-9a4f-b63883a1c763",
+      "name": "Send a message",
+      "webhookId": "b8e891df-dc67-4ea7-8b04-c1e4d20a4969",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Nd7OLj00RtSKit22",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text Classifier": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinecone Vector Store": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Cohere": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "594bcd61-7fef-4049-a418-4e6fb0ce99df",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "5f4f4635600bbaa8438fcc2a0ba3de673a08b820ca61c8109616ea2ca8ba1838"
+  },
+  "id": "VGqzspJe3qmuzu9W",
+  "tags": []
+}
